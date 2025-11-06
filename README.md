@@ -55,7 +55,7 @@ resultado = validate_pdf("meu_documento.pdf", verbose=True)
 from validator_api import validate_pdf
 
 # Validar um PDF
-resultado = validate_pdf("FICHA_CNES_-_CHAIENY_assinado.pdf", verbose=True)
+resultado = validate_pdf("documento_assinado.pdf", verbose=True)
 
 # Verificar resultado
 if resultado['status'] == 'valid':
@@ -138,13 +138,6 @@ if resultado['status'] == 'valid':
 - `"invalid"`: Documento não possui assinatura ou assinatura inválida  
 - `"error"`: Erro durante processamento (arquivo não encontrado, erro de rede, etc.)
 
-## 📁 Arquivos de Exemplo
-
-O repositório inclui PDFs de teste:
-
-- `FICHA_CNES_-_CHAIENY_assinado.pdf` - PDF com 1 assinatura válida
-- `FICHA_CNES_-_CHAIENY_assinado_assinado.pdf` - PDF com 2 assinaturas válidas
-- `C00-Last Question.pdf` - PDF sem assinatura (teste de documento inválido)
 
 ## 🔧 Como Funciona
 
@@ -180,7 +173,7 @@ validador_assinatura_iti/
 ### Teste Rápido
 
 ```bash
-python3 -c "from validator_api import validate_pdf; print(validate_pdf('FICHA_CNES_-_CHAIENY_assinado.pdf'))"
+python3 -c "from validator_api import validate_pdf; print(validate_pdf('documento_assinado.pdf'))"
 ```
 
 ## 📝 Licença
