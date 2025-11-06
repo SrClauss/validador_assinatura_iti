@@ -1,0 +1,9 @@
+/venv
+/venv/*
+
+*.pdf
+*.log
+METODO_CAPTURA_REQUISICOES.md
+main.py
+
+/__pycache__/
