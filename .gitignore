@@ -6,4 +6,9 @@
 METODO_CAPTURA_REQUISICOES.md
 main.py
 
-/__pycache__/
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
