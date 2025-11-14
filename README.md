@@ -9,6 +9,8 @@ Módulo Python para validação de assinaturas digitais em documentos PDF usando
 - ✅ **Extração completa de dados**: Informações detalhadas sobre assinaturas, certificados e validade
 - ✅ **Tratamento robusto de erros**: Detecção de documentos sem assinatura, erros de rede, etc.
 - ✅ **Interface simples**: Uma única função `validate_pdf()` que retorna dados estruturados
+- ✅ **Interface Gráfica Tkinter**: Interface visual amigável para uso desktop
+- ✅ **Flexibilidade**: Use como API em seus projetos ou execute a interface gráfica
 
 ## 📦 Instalação
 
@@ -24,15 +26,47 @@ Ou instalar manualmente:
 pip install requests
 ```
 
+Para usar a interface gráfica, você também precisa do Tkinter (geralmente já incluído no Python):
+
+```bash
+# Ubuntu/Debian
+sudo apt-get install python3-tk
+
+# Fedora
+sudo dnf install python3-tkinter
+
+# macOS e Windows geralmente já vêm com Tkinter
+```
+
 ## 💡 Uso Básico
 
-### Importação
+### Opção 1: Interface Gráfica (GUI)
+
+Execute a interface gráfica para validar PDFs de forma visual e intuitiva:
+
+```bash
+python3 tkinter_gui.py
+```
+
+![Interface Gráfica](https://github.com/user-attachments/assets/6803d849-0ba8-4ae2-9921-51480e8385d6)
+
+**Como usar a GUI:**
+1. Clique em "Selecionar PDF" para escolher um arquivo
+2. Clique em "Validar Assinatura" para iniciar a validação
+3. Veja os resultados detalhados na área de resultados
+4. Use "Limpar" para começar uma nova validação
+
+### Opção 2: API Python (Programático)
+
+### Opção 2: API Python (Programático)
+
+#### Importação
 
 ```python
 from validator_api import validate_pdf
 ```
 
-### Validação Simples
+#### Validação Simples
 
 ```python
 # Modo silencioso (padrão)
@@ -40,7 +74,7 @@ resultado = validate_pdf("meu_documento.pdf")
 print(f"Status: {resultado['status']}")
 ```
 
-### Validação Detalhada
+#### Validação Detalhada
 
 ```python
 # Modo verboso - mostra progresso
@@ -163,17 +197,23 @@ O módulo replica exatamente os headers do Chrome para compatibilidade com a API
 
 ```
 validador_assinatura_iti/
-├── validator_api.py          # Módulo principal
+├── validator_api.py          # Módulo principal (API)
+├── tkinter_gui.py            # Interface gráfica Tkinter
 ├── requirements.txt          # Dependências
-├── METODO_CAPTURA_REQUISICOES.md  # Documentação técnica
 ├── README.md                 # Este arquivo
-└── PDFs de exemplo...
+└── .gitignore                # Arquivos ignorados
 ```
 
 ### Teste Rápido
 
+**API Python:**
 ```bash
 python3 -c "from validator_api import validate_pdf; print(validate_pdf('documento_assinado.pdf'))"
+```
+
+**Interface Gráfica:**
+```bash
+python3 tkinter_gui.py
 ```
 
 ## 📝 Licença
