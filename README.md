@@ -16,7 +16,24 @@ Módulo Python para validação de assinaturas digitais em documentos PDF usando
 
 ## ⚡ Executável Rust (Recomendado para Performance)
 
-Um executável nativo Linux está incluído em `bin/validador_iti`:
+### 🖥️ **Interface Gráfica (GUI)**
+
+Interface visual moderna e intuitiva:
+
+```bash
+./bin/validador_iti_gui
+```
+
+**Funcionalidades:**
+- 📁 Seletor visual de arquivos
+- ✓ Validação com um clique
+- 🌍 Suporte a 3 idiomas (pt-br, en, es)
+- 📄 Geração automática de relatório PDF
+- 📊 Resultados detalhados em tempo real
+
+### 💻 **CLI (Linha de Comando)**
+
+Para automação e scripts:
 
 ```bash
 # Validar PDF (retorna JSON)
@@ -31,8 +48,9 @@ Um executável nativo Linux está incluído em `bin/validador_iti`:
 
 **Vantagens:**
 - 🚀 **10x mais rápido** que Python
-- 📦 **Binário único** de 2.1MB (sem dependências)
-- ⚙️ **Executável nativo** (não precisa de runtime)
+- 📦 **Binários standalone** (sem dependências)
+- ⚙️ **Executáveis nativos** (não precisa de runtime)
+- 🎨 **GUI moderna** com egui
 
 Ver [documentação completa](rust/README.md) para mais detalhes.
 

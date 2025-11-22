@@ -2,9 +2,32 @@
 
 Implementação em Rust do validador de assinaturas digitais em PDFs usando a API do ITI.
 
-## 🚀 Executável Pré-compilado
+## 🖥️ Interface Gráfica (GUI)
 
-Um executável Linux x86_64 pré-compilado está disponível em:
+**Executável com interface visual moderna!**
+
+```bash
+# Executar interface gráfica
+./bin/validador_iti_gui
+```
+
+**Funcionalidades da GUI:**
+- 📁 Seletor de arquivos PDF visual
+- ✓ Botão de validação com feedback em tempo real
+- 🌍 Seleção de idioma do relatório (Português, English, Español)
+- 📄 Geração automática de relatório PDF
+- 📊 Visualização detalhada dos resultados
+- 🎨 Interface moderna usando egui
+
+**Tamanho:** 8.7 MB (executável standalone)
+
+![Screenshot da GUI - Interface moderna e intuitiva]
+
+---
+
+## 🚀 CLI (Linha de Comando)
+
+Um executável CLI também está disponível em:
 ```
 ../bin/validador_iti
 ```
@@ -35,10 +58,20 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 ```bash
 cd rust
+
+# Compilar CLI
+cargo build --release --bin validador_iti
+
+# Compilar GUI
+cargo build --release --bin validador_iti_gui
+
+# Compilar ambos
 cargo build --release
 ```
 
-O executável será gerado em `target/release/validador_iti`
+Os executáveis serão gerados em:
+- CLI: `target/release/validador_iti`
+- GUI: `target/release/validador_iti_gui`
 
 ### Compilação Otimizada
 

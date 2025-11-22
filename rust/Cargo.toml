@@ -9,6 +9,10 @@ description = "Validador de assinaturas digitais em PDFs usando API do ITI"
 name = "validador_iti"
 path = "src/main.rs"
 
+[[bin]]
+name = "validador_iti_gui"
+path = "src/gui.rs"
+
 [dependencies]
 reqwest = { version = "0.11", features = ["blocking", "multipart", "json"] }
 serde = { version = "1.0", features = ["derive"] }
@@ -17,6 +21,9 @@ clap = { version = "4.4", features = ["derive"] }
 tokio = { version = "1", features = ["full"] }
 anyhow = "1.0"
 sha2 = "0.10"
+eframe = "0.28"
+egui = "0.28"
+rfd = "0.14"
 
 [profile.release]
 opt-level = "z"
