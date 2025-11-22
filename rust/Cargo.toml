@@ -1,0 +1,25 @@
+[package]
+name = "validador_iti"
+version = "0.1.0"
+edition = "2021"
+authors = ["Validador ITI Contributors"]
+description = "Validador de assinaturas digitais em PDFs usando API do ITI"
+
+[[bin]]
+name = "validador_iti"
+path = "src/main.rs"
+
+[dependencies]
+reqwest = { version = "0.11", features = ["blocking", "multipart", "json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+clap = { version = "4.4", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+anyhow = "1.0"
+sha2 = "0.10"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true

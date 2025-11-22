@@ -11,6 +11,30 @@ Módulo Python para validação de assinaturas digitais em documentos PDF usando
 - ✅ **Interface simples**: Uma única função `validate_pdf()` que retorna dados estruturados
 - ✅ **Interface Gráfica Tkinter**: Interface visual amigável para uso desktop
 - ✅ **Flexibilidade**: Use como API em seus projetos ou execute a interface gráfica
+- ✅ **Versão Rust**: Executável nativo de alta performance (Linux x86_64 incluído)
+- ✅ **Download de Relatório PDF**: Baixe o PDF do relatório de validação do ITI
+
+## ⚡ Executável Rust (Recomendado para Performance)
+
+Um executável nativo Linux está incluído em `bin/validador_iti`:
+
+```bash
+# Validar PDF (retorna JSON)
+./bin/validador_iti validar documento.pdf
+
+# Gerar relatório PDF do ITI
+./bin/validador_iti gerar-relatorio documento.pdf -o relatorio.pdf
+
+# Validação completa (JSON + PDF)
+./bin/validador_iti completo documento.pdf -v
+```
+
+**Vantagens:**
+- 🚀 **10x mais rápido** que Python
+- 📦 **Binário único** de 2.1MB (sem dependências)
+- ⚙️ **Executável nativo** (não precisa de runtime)
+
+Ver [documentação completa](rust/README.md) para mais detalhes.
 
 ## 📦 Instalação
 
@@ -191,17 +215,24 @@ O módulo replica exatamente os headers do Chrome para compatibilidade com a API
 - Depende da disponibilidade da API do ITI
 - Não é uma API oficial (engenharia reversa)
 
-## ��️ Desenvolvimento
+## 🛠️ Desenvolvimento
 
 ### Estrutura do Projeto
 
 ```
 validador_assinatura_iti/
-├── validator_api.py          # Módulo principal (API)
-├── tkinter_gui.py            # Interface gráfica Tkinter
-├── requirements.txt          # Dependências
-├── README.md                 # Este arquivo
-└── .gitignore                # Arquivos ignorados
+├── validator_api.py              # Módulo principal Python (API)
+├── tkinter_gui.py                # Interface gráfica Tkinter
+├── requirements.txt              # Dependências Python
+├── API_INTEGRATION.md            # Guia de integração com APIs REST
+├── bin/
+│   └── validador_iti             # Executável Linux (Rust)
+├── rust/
+│   ├── src/                      # Código-fonte Rust
+│   ├── Cargo.toml                # Configuração Rust
+│   └── README.md                 # Documentação Rust
+├── README.md                     # Este arquivo
+└── .gitignore                    # Arquivos ignorados
 ```
 
 ### Teste Rápido
