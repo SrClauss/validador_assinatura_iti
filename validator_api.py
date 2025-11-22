@@ -198,3 +198,240 @@ def process_relatorio(relatorio, filename):
             'error': f"Erro ao processar relatório: {str(e)}",
             'relatorio_completo': relatorio
         }
+
+
+def get_conformidade_report(pdf_path, verbose=False):
+    """
+    Obtém o relatório de conformidade completo do ITI (necessário para gerar PDF).
+
+    Args:
+        pdf_path: Caminho para o arquivo PDF
+        verbose: Se True, mostra mensagens de progresso
+
+    Returns:
+        dict contendo:
+        - status: 'success', 'invalid' ou 'error'
+        - relatorio_conformidade: JSON completo (se sucesso)
+        - json_bruto: Resposta da primeira chamada /arquivo
+        - error: Mensagem de erro (se houver)
+    """
+    pdf_path = Path(pdf_path)
+    if not pdf_path.exists():
+        return {
+            "status": "error",
+            "error": f"Arquivo não encontrado: {pdf_path}"
+        }
+
+    if verbose:
+        print(f"\n{'='*60}")
+        print(f"Obtendo relatório de conformidade: {pdf_path.name}")
+        print(f"{'='*60}\n")
+
+    # Etapa 1: Upload do arquivo
+    url_arquivo = "https://validar.iti.gov.br/arquivo"
+    headers = {
+        'Referer': 'https://validar.iti.gov.br/',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'sec-ch-ua': '"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Linux"',
+        'Accept': '*/*',
+        'Origin': 'https://validar.iti.gov.br',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty',
+    }
+
+    files = {
+        'signature_files[]': (pdf_path.name, pdf_path.open('rb'), 'application/pdf')
+    }
+
+    if verbose:
+        print("📤 Enviando PDF para /arquivo...")
+
+    try:
+        response = requests.post(url_arquivo, headers=headers, files=files, timeout=60)
+
+        if verbose:
+            print(f"   Status: {response.status_code}")
+
+        if response.status_code == 400:
+            return {
+                "status": "invalid",
+                "error": "Documento sem assinatura ou inválido",
+                "details": response.json() if response.content else None
+            }
+
+        if response.status_code != 200:
+            return {
+                "status": "error",
+                "error": f"Erro HTTP {response.status_code} em /arquivo",
+                "details": response.text
+            }
+
+        json_bruto = response.json()
+
+        if verbose:
+            print(f"   ✓ Resposta recebida ({len(json.dumps(json_bruto))} bytes)")
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Erro ao chamar /arquivo: {str(e)}"
+        }
+    finally:
+        files['signature_files[]'][1].close()
+
+    # Etapa 2: Obter relatório de conformidade
+    url_conformidade = "https://validar.iti.gov.br/conformidade"
+    headers_conformidade = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Referer': 'https://validar.iti.gov.br/',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'sec-ch-ua': '"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Linux"',
+        'Origin': 'https://validar.iti.gov.br',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty',
+    }
+
+    if verbose:
+        print("📥 Processando com /conformidade...")
+
+    try:
+        response_conformidade = requests.post(
+            url_conformidade,
+            headers=headers_conformidade,
+            json=json_bruto,
+            timeout=60
+        )
+
+        if verbose:
+            print(f"   Status: {response_conformidade.status_code}")
+
+        if response_conformidade.status_code != 200:
+            return {
+                "status": "error",
+                "error": f"Erro HTTP {response_conformidade.status_code} em /conformidade",
+                "json_bruto": json_bruto,
+                "details": response_conformidade.text
+            }
+
+        relatorio_conformidade = response_conformidade.json()
+
+        if verbose:
+            print(f"   ✓ Relatório de conformidade recebido\n")
+            print(f"{'='*60}\n")
+
+        return {
+            "status": "success",
+            "relatorio_conformidade": relatorio_conformidade,
+            "json_bruto": json_bruto
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Erro ao processar /conformidade: {str(e)}",
+            "json_bruto": json_bruto
+        }
+
+
+def download_relatorio_pdf(relatorio_conformidade, language="pt-br", save_as=None, verbose=False):
+    """
+    Faz download do PDF do relatório de validação do ITI.
+
+    Args:
+        relatorio_conformidade: JSON retornado por get_conformidade_report()
+        language: Idioma do relatório - "pt-br", "en" ou "es" (padrão: "pt-br")
+        save_as: Caminho onde salvar o PDF. Se None, retorna apenas os bytes
+        verbose: Se True, mostra mensagens de progresso
+
+    Returns:
+        dict contendo:
+        - status: 'success' ou 'error'
+        - pdf_bytes: Bytes do PDF (se sucesso)
+        - pdf_path: Caminho do arquivo salvo (se save_as foi fornecido)
+        - error: Mensagem de erro (se houver)
+    """
+    if language not in ["pt-br", "en", "es"]:
+        return {
+            "status": "error",
+            "error": f"Idioma inválido: {language}. Use 'pt-br', 'en' ou 'es'"
+        }
+
+    if verbose:
+        print(f"\n{'='*60}")
+        print(f"Download do PDF do relatório (idioma: {language})")
+        print(f"{'='*60}\n")
+
+    url_download = "https://validar.iti.gov.br/downloadPdf"
+    headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Referer': 'https://validar.iti.gov.br/',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+        'sec-ch-ua': '"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Linux"',
+        'Origin': 'https://validar.iti.gov.br',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty',
+    }
+
+    # O endpoint espera o JSON stringificado
+    body = {
+        "data": json.dumps(relatorio_conformidade),
+        "language": language
+    }
+
+    if verbose:
+        print("📥 Baixando PDF do relatório...")
+
+    try:
+        response = requests.post(url_download, headers=headers, json=body, timeout=60)
+
+        if verbose:
+            print(f"   Status: {response.status_code}")
+
+        if response.status_code != 200:
+            return {
+                "status": "error",
+                "error": f"Erro HTTP {response.status_code} em /downloadPdf",
+                "details": response.text
+            }
+
+        pdf_bytes = response.content
+
+        if verbose:
+            print(f"   ✓ PDF recebido ({len(pdf_bytes)} bytes)")
+
+        result = {
+            "status": "success",
+            "pdf_bytes": pdf_bytes
+        }
+
+        # Salvar em arquivo se solicitado
+        if save_as:
+            save_path = Path(save_as)
+            save_path.parent.mkdir(parents=True, exist_ok=True)
+            save_path.write_bytes(pdf_bytes)
+            result["pdf_path"] = str(save_path)
+
+            if verbose:
+                print(f"   ✓ Salvo em: {save_path}")
+
+        if verbose:
+            print(f"{'='*60}\n")
+
+        return result
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Erro ao baixar PDF: {str(e)}"
+        }
